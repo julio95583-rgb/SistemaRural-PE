@@ -1,0 +1,105 @@
+@startuml
+title SistemaRural-PE - Diagrama de Clases UML
+skinparam classAttributeIconSize 0
+
+class Usuario {
+ - idUsuario: int
+ - nombreUsuario: String
+ - contrasena: String
+ - rol: String
+ + iniciarSesion(): boolean
+ + cerrarSesion(): void
+ + verificarPermisos(): boolean
+}
+
+class Administrador {
+ + gestionarUsuarios(): void
+ + generarReportes(): void
+}
+
+class PersonalSalud {
+ + registrarPaciente(): void
+ + gestionarCita(): void
+ + registrarAtencion(): void
+}
+
+class Paciente {
+ - idPaciente: int
+ - nombre: String
+ - apellido: String
+ - dni: String
+ - telefono: String
+ + registrarPaciente(): void
+ + actualizarDatos(): void
+ + consultarPaciente(): void
+ + getDni(): String
+ + getNombre(): String
+}
+
+class Cita {
+ - idCita: int
+ - fecha: Date
+ - hora: String
+ - estado: String
+ + registrarCita(): void
+ + cancelarCita(): void
+ + confirmarCita(): void
+ + consultarCita(): void
+}
+
+class Atencion {
+ - idAtencion: int
+ - fecha: Date
+ - motivo: String
+ - observacion: String
+ + registrarAtencion(): void
+ + actualizarAtencion(): void
+ + generarResumen(): String
+}
+
+class Reporte {
+ <<abstract>>
+ - tipoReporte: String
+ - fechaInicio: Date
+ - fechaFin: Date
+ + generarReporte(): void
+ + exportarReporte(): void
+}
+
+class ReportePacientes {
+ + generarReporte(): void
+}
+
+class ReporteCitas {
+ + generarReporte(): void
+}
+
+class ReporteAtenciones {
+ + generarReporte(): void
+}
+
+class ReporteFactory {
+ + crearReporte(tipo: String): Reporte
+}
+
+class GestorSistema {
+ <<Singleton>>
+ - instancia: GestorSistema
+ + obtenerInstancia(): GestorSistema
+ + iniciarSistema(): void
+ + cerrarSistema(): void
+}
+
+Usuario <|-- Administrador
+Usuario <|-- PersonalSalud
+Paciente "1" -- "0..*" Cita : agenda >
+Paciente "1" *-- "0..*" Atencion : posee >
+PersonalSalud "1" o-- "0..*" Cita : gestiona >
+Usuario "1" -- "0..*" Reporte : genera >
+Reporte <|-- ReportePacientes
+Reporte <|-- ReporteCitas
+Reporte <|-- ReporteAtenciones
+ReporteFactory ..> Reporte : crea >
+GestorSistema ..> Usuario : administra >
+GestorSistema ..> ReporteFactory : utiliza >
+@enduml
